@@ -1,0 +1,30 @@
+# Compiled Object files
+*.slo
+*.lo
+*.o
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+
+# QtCreator files
+*.creator
+*.creator.user
+*.files
+*.config
+*.includes
+
+# CMake
+CMakeFiles
+CMakeCache.txt
+cmake_install.cmake
+install_manifest.txt
+Makefile
+
+*.autosave
+*creator.user*
