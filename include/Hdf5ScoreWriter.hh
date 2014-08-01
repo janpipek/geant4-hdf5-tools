@@ -5,6 +5,9 @@
 
 namespace g4h5
 {
+    /**
+      * @short Score writer that writes to HDF5 file.
+      */
     class Hdf5ScoreWriter : public G4VScoreWriter
     {
     public:

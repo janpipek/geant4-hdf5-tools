@@ -15,6 +15,7 @@ namespace g4h5
     void Hdf5ScoreWriter::DumpQuantityToFile(const G4String& psName, 
         const G4String& fileName, const G4String& option)
     {
+        // File
         H5File* file;
         try 
         {
@@ -33,8 +34,60 @@ namespace g4h5
             file = new H5File(fileName, H5F_ACC_TRUNC);
         }
 
-        MeshScoreMap scoreMap = fScoringMesh->GetScoreMap();
-        // scoreMap.
+        // Group
+        G4String groupName = fScoringMesh->GetWorldName();
+        if (!H5Lexists(file->getId(), groupName.c_str(), H5P_DEFAULT))
+        {
+            file->createGroup(groupName);
+        }
+        Group group = file->openGroup(groupName);
+
+        // DataSpace
+        hsize_t dim[] = { (hsize_t)fNMeshSegments[0], (hsize_t)fNMeshSegments[1], (hsize_t)fNMeshSegments[2] };
+        DataSpace fDataSpace(3, dim);
+
+        // DataSet
+        if (H5Lexists(group.getId(), psName.c_str(), H5P_DEFAULT))
+        {
+            group.unlink(psName.c_str());
+            G4cout << "Existing data set " << psName << " deleted." << G4endl;
+        }
+        DataSet dataSet = group.createDataSet(psName, PredType::NATIVE_DOUBLE, fDataSpace);
+
+        // ScoreMap
+        MeshScoreMap scMap = fScoringMesh->GetScoreMap();
+        MeshScoreMap::const_iterator msMapItr = scMap.find(psName);
+        if(msMapItr == scMap.end()) {
+            G4cerr << "ERROR : DumpToFile : Unknown quantity, \""
+                 << psName << "\"." << G4endl;
+            return;
+        }
+        std::map<G4int, G4double*> * score = msMapItr->second->GetMap();
+
+        // Write data
+        hsize_t count[] = {1, 1, 1};  // Block count
+
+        DataSpace mDataSpace(3, dim);
+        hsize_t mStart[] = {0, 0, 0};
+        mDataSpace.selectHyperslab(H5S_SELECT_SET, count, mStart); // Always just the address
+
+        for(int x = 0; x < fNMeshSegments[0]; x++) {
+            for(int y = 0; y < fNMeshSegments[1]; y++) {
+                for(int z = 0; z < fNMeshSegments[2]; z++) {
+                    G4int idx = GetIndex(x, y, z);
+                    std::map<G4int, G4double*>::iterator value = score->find(idx);
+                    if (value != score->end())
+                    {
+                        double quantity = *(value->second);
+                        hsize_t start[] = { (hsize_t)x, (hsize_t)y, (hsize_t)z }; // Start of hyperslab
+                        fDataSpace.selectHyperslab( H5S_SELECT_SET, count, start);
+                        dataSet.write(&quantity, PredType::NATIVE_DOUBLE, mDataSpace, fDataSpace);
+                    }
+                }
+            }
+        }
+
+        // Close file and we're done
         delete file;
     }
 }
