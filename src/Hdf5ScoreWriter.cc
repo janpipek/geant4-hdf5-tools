@@ -4,6 +4,8 @@
 #include <H5Cpp.h>
 #include <G4VScoringMesh.hh>
 
+#include "functions.hh"
+
 using namespace std;
 
 #ifndef H5_NO_NAMESPACE
@@ -86,6 +88,17 @@ namespace g4h5
                 }
             }
         }
+
+        // Add descriptory attributes
+        G4ThreeVector size = fScoringMesh->GetSize();
+        addDoubleAttribute(&dataSet, "size_x", size.x());
+        addDoubleAttribute(&dataSet, "size_y", size.y());
+        addDoubleAttribute(&dataSet, "size_z", size.z());
+
+        G4ThreeVector position = fScoringMesh->GetTranslation();
+        addDoubleAttribute(&dataSet, "x", position.x());
+        addDoubleAttribute(&dataSet, "y", position.y());
+        addDoubleAttribute(&dataSet, "z", position.z());
 
         // Close file and we're done
         delete file;
