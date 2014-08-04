@@ -4,7 +4,7 @@
 #include <H5Cpp.h>
 #include <G4VScoringMesh.hh>
 
-#include "functions.hh"
+#include "hdf5functions.hh"
 
 using namespace std;
 
@@ -91,14 +91,19 @@ namespace g4h5
 
         // Add descriptory attributes
         G4ThreeVector size = fScoringMesh->GetSize();
-        addDoubleAttribute(&dataSet, "size_x", size.x());
-        addDoubleAttribute(&dataSet, "size_y", size.y());
-        addDoubleAttribute(&dataSet, "size_z", size.z());
+        addAttribute(&dataSet, "size_x", size.x() / mm);
+        addAttribute(&dataSet, "size_y", size.y() / mm);
+        addAttribute(&dataSet, "size_z", size.z() / mm);
 
         G4ThreeVector position = fScoringMesh->GetTranslation();
-        addDoubleAttribute(&dataSet, "x", position.x());
-        addDoubleAttribute(&dataSet, "y", position.y());
-        addDoubleAttribute(&dataSet, "z", position.z());
+        addAttribute(&dataSet, "x", position.x() / mm);
+        addAttribute(&dataSet, "y", position.y() / mm);
+        addAttribute(&dataSet, "z", position.z() / mm);
+
+        G4RotationMatrix matrix = fScoringMesh->GetRotationMatrix();
+        addAttribute(&dataSet, "rotate_phi", matrix.phi() / deg);
+        addAttribute(&dataSet, "rotate_theta", matrix.theta() / deg);
+        addAttribute(&dataSet, "rotate_psi", matrix.psi() / deg);
 
         // Close file and we're done
         delete file;
