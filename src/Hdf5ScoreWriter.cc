@@ -91,19 +91,19 @@ namespace g4h5
 
         // Add descriptory attributes
         G4ThreeVector size = fScoringMesh->GetSize();
-        addAttribute(&dataSet, "size_x", size.x() / mm);
-        addAttribute(&dataSet, "size_y", size.y() / mm);
-        addAttribute(&dataSet, "size_z", size.z() / mm);
+        addAttribute(dataSet, "size_x", size.x() / mm);
+        addAttribute(dataSet, "size_y", size.y() / mm);
+        addAttribute(dataSet, "size_z", size.z() / mm);
 
         G4ThreeVector position = fScoringMesh->GetTranslation();
-        addAttribute(&dataSet, "x", position.x() / mm);
-        addAttribute(&dataSet, "y", position.y() / mm);
-        addAttribute(&dataSet, "z", position.z() / mm);
+        addAttribute(dataSet, "x", position.x() / mm);
+        addAttribute(dataSet, "y", position.y() / mm);
+        addAttribute(dataSet, "z", position.z() / mm);
 
         G4RotationMatrix matrix = fScoringMesh->GetRotationMatrix();
-        addAttribute(&dataSet, "rotate_phi", matrix.phi() / deg);
-        addAttribute(&dataSet, "rotate_theta", matrix.theta() / deg);
-        addAttribute(&dataSet, "rotate_psi", matrix.psi() / deg);
+        addAttribute(dataSet, "rotate_phi", matrix.phi() / deg);
+        addAttribute(dataSet, "rotate_theta", matrix.theta() / deg);
+        addAttribute(dataSet, "rotate_psi", matrix.psi() / deg);
 
         // Close file and we're done
         delete file;

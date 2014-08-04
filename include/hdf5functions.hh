@@ -19,8 +19,11 @@ namespace g4h5
 
     /**
       * @brief Check existence of attribute using C API.
+      *
+      * Template: use either H5Object or hid_t.
       */
-    bool hasAttribute(H5Object* obj, const std::string& name);
+    template<typename T> bool hasAttribute(const T& obj, const std::string& name);
+    template<> bool hasAttribute<hid_t>(const hid_t& hid, const std::string& name);
 
     /**
       * @brief HDF5 type inquiry function template + few common implementations.
@@ -31,24 +34,53 @@ namespace g4h5
     template<> DataType getDataType<double>();
     template<> DataType getDataType<std::string>(); // Note: C-type string assumed
 
-    template<typename T> void addAttribute(H5Object* obj, const std::string& name, const T& value)
+    /**
+      * @brief Get attribute of an object.
+      *
+      * Template: use either H5Object or hid_t.
+      */
+    template<typename T> Attribute getAttribute(const T& obj, const std::string& name);
+    template<> Attribute getAttribute<hid_t>(const hid_t& hid, const std::string& name);
+
+    /**
+      * @brief Get attribute value.
+      *
+      * Template: use either H5Object or hid_t.
+      * If attribute is not present, throw an exception.
+      */
+    template<typename T, typename U> T readAttribute(const U& obj, const std::string& name);
+
+    /**
+      * @brief Get attribute value.
+      *
+      * Template: use either H5Object or hid_t.
+      * If attribute is not present, return a default value.
+      */
+    template<typename T, typename U> T readAttribute(const U& obj, const std::string& name, const T& defaultValue);
+
+    template<typename T> void addAttribute(H5Object& obj, const std::string& name, const T& value);
+
+    /*** TEMPLATE IMPLEMENTATIONS ***/
+    template<typename T> bool hasAttribute(const T& obj, const std::string& name)
     {
-        DataType dataType = getDataType<T>();
-        DataSpace att_space(H5S_SCALAR);
-        Attribute att = obj->createAttribute(name, dataType, att_space);
-        att.write(dataType, &value); // For strings, value taken as string&, for others as void*
+        return hasAttribute(obj.getId(), name);
     }
 
-    template<typename T> T readAttribute(H5Object* obj, const std::string& name)
+    template<typename T> Attribute getAttribute(const T& obj, const std::string& name)
+    {
+        return obj.openAttribute(name);
+    }
+
+    template<typename T, typename U> T readAttribute(const U& obj, const std::string& name)
     {
         DataType dataType = getDataType<T>();
-        Attribute att = obj->openAttribute(name);
+        Attribute att = getAttribute(obj, name);
         T result;
         att.read(dataType, &result); // For strings, result taken as string&, for others as void*
         return result;
     }
 
-    template<typename T> T readAttribute(H5Object* obj, const std::string& name, const T& defaultValue)
+    template<typename T, typename U> T readAttribute(const U& obj, const std::string& name, const T& defaultValue)
     {
         if (!hasAttribute(obj, name))
         {
@@ -58,6 +90,14 @@ namespace g4h5
         {
             return readAttribute<T>(obj, name);
         }
+    }
+
+    template<typename T> void addAttribute(H5Object& obj, const std::string& name, const T& value)
+    {
+        DataType dataType = getDataType<T>();
+        DataSpace att_space(H5S_SCALAR);
+        Attribute att = obj.createAttribute(name, dataType, att_space);
+        att.write(dataType, &value); // For strings, value taken as string&, for others as void*
     }
 }
 
