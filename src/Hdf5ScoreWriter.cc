@@ -41,7 +41,7 @@ namespace g4h5
         else
         {
             // File does not exist
-            file = new H5File(fileName, H5F_ACC_CREAT);
+            file = new H5File(fileName, H5F_ACC_TRUNC);
         }
 
         // Group
