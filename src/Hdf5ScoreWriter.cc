@@ -3,6 +3,7 @@
 #include <stdexcept>
 #include <H5Cpp.h>
 #include <G4VScoringMesh.hh>
+#include <fstream>
 
 #include "hdf5functions.hh"
 
@@ -12,6 +13,13 @@ using namespace std;
     using namespace H5;
 #endif
 
+bool file_exists(const char* fileName)
+{
+    // Inspired by http://stackoverflow.com/questions/12774207/fastest-way-to-check-if-a-file-exist-using-standard-c-c11-c
+    std::ifstream infile(fileName);
+    return infile.good();
+}
+
 namespace g4h5
 {
     void Hdf5ScoreWriter::DumpQuantityToFile(const G4String& psName, 
@@ -19,7 +27,7 @@ namespace g4h5
     {
         // File
         H5File* file;
-        try 
+        if (file_exists(fileName.c_str()))
         {
             if (H5File::isHdf5(fileName))
             {
@@ -30,7 +38,7 @@ namespace g4h5
                 throw new runtime_error("File has invalid format.");
             }
         }
-        catch (H5::Exception&)
+        else
         {
             // File does not exist
             file = new H5File(fileName, H5F_ACC_CREAT);
