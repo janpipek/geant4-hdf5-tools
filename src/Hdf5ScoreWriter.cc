@@ -30,7 +30,7 @@ namespace g4h5
                 throw new runtime_error("File has invalid format.");
             }
         }
-        catch (H5::FileIException)
+        catch (H5::Exception&)
         {
             // File does not exist
             file = new H5File(fileName, H5F_ACC_TRUNC);

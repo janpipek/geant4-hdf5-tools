@@ -3,6 +3,11 @@
 
 /**
   * Various shortcuts for HDF5 functionality without simple C++ API.
+  *
+  * Usually, the functions accept either a reference to H5Object
+  * or its hid_t.
+  *
+  * TODO: support pointers via template magic
   */
 
 #include <string>
