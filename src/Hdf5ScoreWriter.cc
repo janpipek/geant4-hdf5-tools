@@ -33,7 +33,7 @@ namespace g4h5
         catch (H5::FileIException)
         {
             // File does not exist
-            file = new H5File(fileName, H5F_ACC_TRUNC);
+            file = new H5File(fileName, H5F_ACC_CREAT);
         }
 
         // Group
