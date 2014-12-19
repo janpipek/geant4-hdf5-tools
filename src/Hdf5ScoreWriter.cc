@@ -13,15 +13,16 @@ using namespace std;
     using namespace H5;
 #endif
 
-bool file_exists(const char* fileName)
-{
-    // Inspired by http://stackoverflow.com/questions/12774207/fastest-way-to-check-if-a-file-exist-using-standard-c-c11-c
-    std::ifstream infile(fileName);
-    return infile.good();
-}
-
 namespace g4h5
 {
+
+    bool file_exists(const char* fileName)
+    {
+        // Inspired by http://stackoverflow.com/questions/12774207/fastest-way-to-check-if-a-file-exist-using-standard-c-c11-c
+        std::ifstream infile(fileName);
+        return infile.good();
+    }
+
     void Hdf5ScoreWriter::DumpQuantityToFile(const G4String& psName, 
         const G4String& fileName, const G4String& option)
     {
@@ -41,7 +42,7 @@ namespace g4h5
         else
         {
             // File does not exist
-            file = new H5File(fileName, H5F_ACC_CREAT);
+            file = new H5File(fileName, H5F_ACC_TRUNC);
         }
 
         // Group

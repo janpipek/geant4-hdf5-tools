@@ -13,11 +13,6 @@ using namespace std;
 
 namespace g4h5
 {
-    bool hasAttribute(H5Object *obj, const string &name)
-    {
-
-    }
-
     template<> DataType getDataType<int>()
     {
         return IntType(PredType::NATIVE_INT);
